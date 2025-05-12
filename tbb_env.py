@@ -25,8 +25,11 @@ class TBBEnv(gym.Env):
         self.screen_grabber = dxcam.create(output_idx=0)
         self.text_reader = easyocr.Reader(['en'])
 
-    def reset(self):
-	pass
+    def reset(self, seed=None, options=None):
+        pyautogui.press('r')#.//<insert ingame input that resets environment>
+        obs = resize_img(self.screen_grabber.grab(), WIDTH // RESCALE_FACTOR, HEIGHT // RESCALE_FACTOR)
+        self.episode_steps=0
+        return obs, {}
 
     def step(self, action):
         pass
