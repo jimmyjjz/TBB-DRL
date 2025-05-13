@@ -1,0 +1,15 @@
+Mods: {
+	TBBTrainingMod: {
+		Keybinds: {
+			Debug.DisplayName: Debug
+			Reset.DisplayName: Reset
+		}
+
+		Items: {
+			OneTapper: {
+				DisplayName: One Tapper
+				Tooltip: ""
+			}
+		}
+	}
+}

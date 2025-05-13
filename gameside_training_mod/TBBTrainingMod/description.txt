@@ -1,0 +1,1 @@
+Mod that supports gameside operations for Terraria boss battle environment
