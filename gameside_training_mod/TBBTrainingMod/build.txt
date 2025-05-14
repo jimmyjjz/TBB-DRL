@@ -1,3 +1,0 @@
-displayName = TBB Environment Gameside
-author = ValiantKiwi
-version = 0.1

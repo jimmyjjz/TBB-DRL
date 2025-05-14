@@ -8,7 +8,7 @@ namespace TBBTrainingMod.Content.Items{
 			Item.damage = 999999;
 			Item.DamageType = DamageClass.Melee;
 			Item.width = 40;
-			Item.height = 80;
+			Item.height = 160;
 			Item.useTime = 10;
 			Item.useAnimation = 10;
 			Item.useStyle = ItemUseStyleID.Swing;
