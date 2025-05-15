@@ -1,5 +1,10 @@
 {
-	"reward_accumulant_path":"C:\\Users\\Bossy\\OneDrive\\Documents\\My Games\\Terraria\\tModLoader\\ModSources\\TBBTrainingMod\\reward_accumulant.txt",
+	"reward_accumulant_path":"insert path",
 	"attack_reward_factor":1,
-	"hurt_punishment_factor":5
+	"hurt_punishment_factor":5,
+	"initial_point_x":35000,
+	"initial_point_y":8166,
+	"win_reward":1000,
+	"lose_reward":-20,
+	"account_previous_reward_at_final_state": false
 }

@@ -5,13 +5,25 @@ using Terraria.GameInput;
 using Microsoft.Xna.Framework;
 using TBBTrainingMod.Content.Items;
 using TBBTrainingMod;
+using RewardManager;
+using SettingsAccesser;
 
 namespace ResetManager{
     public class Trigger : ModPlayer{
         public override void ProcessTriggers(TriggersSet triggersSet){
             if(Keybinds.resetKeybind.JustPressed){
+                //reset reward accumulant
+                RewardAccumulantManager.resetRewardAccumulant();
+                //reset velocity
+                Player.velocity = Vector2.Zero;
+                //reset fall start
+                Player.fallStart = (int)(Player.position.Y/16f);
                 //teleport
-                Player.Teleport(new Vector2(35000, 8166), 1);
+                Player.Teleport(new Vector2(SettingsOperations.get_int_value("initial_point_x"), SettingsOperations.get_int_value("initial_point_y")), 1);
+                //if player is dead then player will immediately spawn at defined location
+                Main.spawnTileX = (int)Player.position.X/16;
+                Main.spawnTileY = (int)Player.position.Y/16;
+                Player.respawnTimer = 0;
                 //replenish health and mana
                 Player.statLife = Player.statLifeMax2;
                 Player.statMana = Player.statManaMax2;
