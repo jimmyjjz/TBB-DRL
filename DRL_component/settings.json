@@ -8,7 +8,7 @@
 	"lose_reward":-20,
 	"account_previous_reward_at_final_state": false,
 	"use_checkpoint":false,
-	"checkpoint_to_use":5000,
+	"checkpoint_to_use":"200",
 	"stride": 100,
 	"amount_of_strides": 2,
 	"restrain_cursor_from_side_monitor": true,

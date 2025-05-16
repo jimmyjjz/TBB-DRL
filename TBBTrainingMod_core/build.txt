@@ -1,0 +1,3 @@
+displayName = TBB Environment Gameside
+author = jimmyjjz
+version = 0.1

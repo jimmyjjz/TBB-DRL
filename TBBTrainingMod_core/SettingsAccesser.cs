@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SettingsAccesser{
     public class SettingsOperations{
-        private static readonly string settingsPath="path";// path to settings json in DL side
+        private static readonly string settingsPath="...\\settings.json";// path to settings json in DL side
         private static readonly Dictionary<string, dynamic> data = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(File.ReadAllText(settingsPath));
         public static dynamic get_string_value(string key){
             return data[key].GetString();
