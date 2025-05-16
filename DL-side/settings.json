@@ -1,10 +1,16 @@
 {
-	"reward_accumulant_path":"insert path",
+	"reward_accumulant_path":"...\\reward_accumulant.txt",
 	"attack_reward_factor":1,
-	"hurt_punishment_factor":5,
+	"hurt_punishment_factor":10,
 	"initial_point_x":35000,
 	"initial_point_y":8166,
 	"win_reward":1000,
 	"lose_reward":-20,
-	"account_previous_reward_at_final_state": false
+	"account_previous_reward_at_final_state": false,
+	"use_checkpoint":false,
+	"checkpoint_to_use":5000,
+	"stride": 100,
+	"amount_of_strides": 2,
+	"restrain_cursor_from_side_monitor": true,
+	"stop_input_when_cursor_off_main_screen": true
 }

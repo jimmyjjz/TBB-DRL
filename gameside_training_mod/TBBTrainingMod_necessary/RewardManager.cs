@@ -27,12 +27,10 @@ namespace RewardManager{
     }
     public class TakeDamageDisincentive : ModPlayer{
         public override void OnHurt(Player.HurtInfo info){
-            RewardAccumulantManager.addReward(-info.Damage*SettingsOperations.get_int_value("hurt_punishment_factor"));
-            if(Player.dead){
-                Main.NewText("player died");
-                File.WriteAllText(SettingsOperations.get_string_value("reward_accumulant_path"), "Inactive. Player died.");
+            if(!RewardAccumulantManager.readRewardAccumulant().Equals("Inactive. Boss defeated.")){
+                RewardAccumulantManager.addReward(-info.Damage * SettingsOperations.get_int_value("hurt_punishment_factor"));
+                //Main.NewText($"Damage taken: {info.Damage}");
             }
-            //Main.NewText($"Damage taken: {info.Damage}");
         }
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource){
             File.WriteAllText(SettingsOperations.get_string_value("reward_accumulant_path"), "Inactive. Player died.");

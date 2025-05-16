@@ -1,1 +1,1 @@
-Mod that supports gameside operations for Terraria boss battle environment
+Mod implements gameside operations for Terraria boss battle DRL environment(TBBEnv)
