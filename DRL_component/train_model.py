@@ -1,3 +1,4 @@
+import pydirectinput
 import tbb_env
 import os
 import atexit
@@ -5,6 +6,9 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.env_util import make_vec_env
 from utils import get_setting, print_all_settings
+
+HEIGHT = get_setting("monitor_height")
+WIDTH = get_setting("monitor_width")
 
 def train():
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -21,7 +25,7 @@ def train():
 
     if get_setting("use_checkpoint"):
         checkpoint=get_setting("checkpoint_to_use")
-        checkpoint_path = "checkpoint/"+checkpoint
+        checkpoint_path = "checkpoint/"+str(checkpoint)+".zip"
         if os.path.isfile(checkpoint_path):
             print(f"Checkpoint {checkpoint} found. Using checkpoint {checkpoint}.")
             initial_timestep = checkpoint
@@ -35,16 +39,16 @@ def train():
     if not using_checkpoint:
         print("Fresh start.")
         env = VecFrameStack(make_vec_env(tbb_env.TBBEnv, n_envs=1), n_stack=4)
-        model = PPO("CnnPolicy", env, verbose=1, n_steps=stride, tensorboard_log="checkpoint/tensorboard")
+        model = PPO("CnnPolicy", env, learning_rate=3e-5, verbose=1, n_steps=stride, tensorboard_log="checkpoint/tensorboard")
 
     atexit.register(env.close)
 
-    amount_of_strides=get_setting("amount_of_strides")
     for i in range(1,get_setting("amount_of_strides")+1):
-        print(f"Stride {i+1}.")
-        model = model.learn(total_timesteps=stride, reset_num_timesteps=False)
+        print(f"Stride {i}.")
+        env.reset()
+        model.learn(total_timesteps=stride, reset_num_timesteps=False)
         model.save(f"checkpoint/{initial_timestep+(stride*i)}")
-        print(f"Current model saved as checkpoint.")
+        print(f"Current model saved as checkpoint {initial_timestep+(stride*i)}.")
 
 if __name__ == "__main__":
     train()

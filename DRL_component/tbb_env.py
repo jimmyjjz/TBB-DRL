@@ -5,8 +5,8 @@ import numpy as np
 import dxcam
 from utils import resize_img, get_setting
 
-HEIGHT = 1080
-WIDTH = 1920
+HEIGHT = get_setting("monitor_height")
+WIDTH = get_setting("monitor_width")
 RESCALE_FACTOR = 8
 
 class TBBEnv(gym.Env):
@@ -17,7 +17,7 @@ class TBBEnv(gym.Env):
         self.observation_space = spaces.Box(0, 255, shape=(HEIGHT // RESCALE_FACTOR, WIDTH // RESCALE_FACTOR, 3), dtype=np.uint8)
         self.total_steps = 0
         self.episode_steps = 0
-        self.pre_reward_accumulant = 0
+        self.pre_reward_denoter = 0
         self.screen_grabber = dxcam.create(output_idx=1)
         self.pre_screen = np.zeros((HEIGHT // RESCALE_FACTOR, WIDTH // RESCALE_FACTOR, 3), dtype=np.uint8)
 
@@ -72,6 +72,8 @@ class TBBEnv(gym.Env):
                 pydirectinput.moveTo(max(min(cur_x+horizontal_move,WIDTH),0), max(min(cur_y+vertical_move,HEIGHT),0))
             else:
                 pydirectinput.moveTo(cur_x + horizontal_move, cur_y + vertical_move)
+        else:
+            print("Mouse is offscreen.")
 
         screen = self.screen_grabber.grab()
         if screen is None:
@@ -82,20 +84,29 @@ class TBBEnv(gym.Env):
             self.pre_screen = obs
 
         finished = False
-        with open("reward_accumulant.txt", "r") as f:
-            cur_reward_accumulant = f.read()
-        if len(cur_reward_accumulant) >= 8 and cur_reward_accumulant[:8] == 'Inactive':
+        with open("reward_denoter.txt", "r") as f:
+            cur_reward_denoter = f.read()
+        if len(cur_reward_denoter) >= 9 and cur_reward_denoter[1:9] == 'Inactive':
             finished = True
-            if cur_reward_accumulant[8:] == ' Player died.':
+            if cur_reward_denoter[10:] == ' Player died.':
                 reward = get_setting("lose_reward")
-            elif cur_reward_accumulant[8:] == ' Boss defeated.':
+            elif cur_reward_denoter[10:] == ' Boss defeated.':
                 reward = get_setting("win_reward")
             else:
                 reward = 0
-            reward += (self.pre_reward_accumulant if get_setting("account_previous_reward_at_final_state") else 0)
+            reward += (self.pre_reward_denoter if get_setting("account_previous_reward_at_final_state") else 0)
         else:
-            reward = int(cur_reward_accumulant) - self.pre_reward_accumulant
-            self.pre_reward_accumulant = int(cur_reward_accumulant)
+            try:
+                reward = int(cur_reward_denoter[1:]) - self.pre_reward_denoter
+                self.pre_reward_denoter = int(cur_reward_denoter[1:])
+            except Exception as e:
+                print("Tried to add inactive reward denoter. If this occurs very rarely ignore this.")
+                reward=0
+        try:
+            if get_setting("punish_run_away") and cur_reward_denoter[0]=="P":
+                reward+=get_setting("run_away_punishment")
+        except IndexError as e:
+            print("Tried to access idx 0 of empty reward_denoter. If this occurs very rarely ignore this.")
 
         self.total_steps += 1
         self.episode_steps += 1

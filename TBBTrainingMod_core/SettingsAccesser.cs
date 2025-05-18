@@ -19,6 +19,18 @@ namespace SettingsAccesser{
         public static dynamic get_bool_value(string key){
             return data[key].GetBoolean();
         }
+        public static dynamic get_loadout(){
+            List<Tuple<int,int>> list = new List<Tuple<int,int>>();
+            foreach (var item in data["loadout"].EnumerateArray()){
+                var enumerator = item.EnumerateArray();
+                enumerator.MoveNext();
+                var first = enumerator.Current.GetInt32();
+                enumerator.MoveNext();
+                var second = enumerator.Current.GetInt32();
+                list.Add(Tuple.Create(first, second));
+            }
+            return list;
+        }
         public static void print_value(dynamic key){
             Console.WriteLine(data[key]);
         }

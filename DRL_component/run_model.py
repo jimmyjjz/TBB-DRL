@@ -15,7 +15,7 @@ def run():
     checkpoint=get_setting("checkpoint_to_use")
 
     try:
-        model = PPO.load("checkpoint/"+checkpoint)
+        model = PPO.load("checkpoint/"+str(checkpoint)+".zip")
     except FileNotFoundError:
         raise Exception(f"Checkpoint {checkpoint} not found.")
 

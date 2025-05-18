@@ -1,12 +1,12 @@
 using Terraria.ModLoader;
 using Terraria;
-using Terraria.ID;
 using Terraria.GameInput;
 using Microsoft.Xna.Framework;
-using TBBTrainingMod.Content.Items;
 using TBBTrainingMod;
 using RewardManager;
 using SettingsAccesser;
+using System.Collections.Generic;
+using System;
 
 namespace ResetManager{
     public class Trigger : ModPlayer{
@@ -15,12 +15,12 @@ namespace ResetManager{
             Player.statLife = Player.statLifeMax2;
             Player.statMana = Player.statManaMax2;
         }
-        public override void ProcessTriggers(TriggersSet triggersSet)
-        {
-            if (Keybinds.resetKeybind.JustPressed)
-            {
-                //reset reward accumulant
-                RewardAccumulantManager.resetRewardAccumulant();
+        public override void ProcessTriggers(TriggersSet triggersSet){
+            if (Keybinds.resetKeybind.JustPressed){
+                //reset runaway punishing toggle
+                RunAwayDisincentive.resetPunishing();
+                //reset reward denoter
+                RewardDenoterManager.resetRewardDenoter();
                 //reset velocity
                 Player.velocity = Vector2.Zero;
                 //reset fall start
@@ -35,37 +35,29 @@ namespace ResetManager{
                 Player.statLife = Player.statLifeMax2;
                 Player.statMana = Player.statManaMax2;
                 //inventory clear
-                for (int i = 0; i < Player.inventory.Length; i++)
-                {
+                for (int i = 0; i < Player.inventory.Length; i++){
                     Player.inventory[i].TurnToAir();
                 }
                 //hotbar setup
-                Player.inventory[0].SetDefaults(ItemID.SniperRifle);
-                for (int i = 1; i <= 9; i++)
-                {
-                    Player.inventory[i].SetDefaults(ItemID.HighVelocityBullet);
-                    Player.inventory[i].stack = 9999;
+                List<Tuple<int,int>> items = SettingsOperations.get_loadout();
+                for (int i = 0; i < items.Count; i++){
+                    Player.inventory[i].SetDefaults(items[i].Item1);
+                    Player.inventory[i].stack = items[i].Item2;
                 }
-                Player.inventory[19].SetDefaults(ModContent.ItemType<OneTapper>());
                 //makes all hostile mobs disappear(not killing)
-                foreach (NPC npc in Main.npc)
-                {
-                    if (npc.active && !npc.friendly && !npc.townNPC && !npc.dontTakeDamage)
-                    {
+                foreach (NPC npc in Main.npc){
+                    if (npc.active && !npc.friendly && !npc.townNPC && !npc.dontTakeDamage){
                         npc.active = false;
                     }
                 }
                 //clear all items
-                foreach (Item item in Main.item)
-                {
-                    if (item.active)
-                    {
+                foreach (Item item in Main.item){
+                    if (item.active){
                         item.TurnToAir();
                     }
                 }
                 //clear chat
-                for (int i = 0; i < 10; i++)
-                {
+                for (int i = 0; i < 10; i++){
                     Main.NewText(" ");
                 }
                 //summon boss
@@ -73,18 +65,15 @@ namespace ResetManager{
                     Entity.GetSource_FromThis(),
                     35050,
                     8100,
-                    NPCID.EyeofCthulhu,
+                    SettingsOperations.get_int_value("boss_id"),
                     Target: Main.myPlayer
                 );
             }
-            if (Keybinds.debugKeybind.JustPressed)
-            {
+            if (Keybinds.debugKeybind.JustPressed){
                 Vector2 position = Player.position;
                 Main.NewText($"Player Position: Pixels = ({position.X}, {position.Y})", 255, 255, 0);
-                foreach (Item item in Main.item)
-                {
-                    if (item.active)
-                    {
+                foreach (Item item in Main.item){
+                    if (item.active){
                         item.TurnToAir();
                     }
                 }
