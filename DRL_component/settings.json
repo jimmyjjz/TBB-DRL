@@ -1,6 +1,6 @@
 {
 	"reward_denoter_path":"...\\reward_denoter.txt",
-	"attack_reward_factor":1,
+	"attack_reward_factor":2,
 	"hurt_punishment_factor":1,
 	"initial_point_x":35000,
 	"initial_point_y":8166,
@@ -8,9 +8,9 @@
 	"lose_reward":0,
 	"account_previous_reward_at_final_state": false,
 	"use_checkpoint":true,
-	"checkpoint_to_use":24000,
+	"checkpoint_to_use":31000,
 	"stride": 1000,
-	"amount_of_strides": 2,
+	"amount_of_strides": 20,
 	"restrain_cursor_from_side_monitor": true,
 	"stop_input_when_cursor_off_main_screen": true,
 	"loadout":[[1254,1],[1302,9999],[1302,9999],[1302,9999],[1302,9999],[1302,9999],[1302,9999],[1302,9999],[1302,9999],[1302,9999]],
@@ -19,5 +19,8 @@
 	"run_away_distance_threshold": 1200.0,
 	"run_away_punishment": -1000,
 	"monitor_width": 1920,
-	"monitor_height": 1080
+	"monitor_height": 1080,
+	"dxcam_device_idx": 0,
+	"dxcam_output_idx": 0,
+	"model_learning_rate": 1e-5
 }

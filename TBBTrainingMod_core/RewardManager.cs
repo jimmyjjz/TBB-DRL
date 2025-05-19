@@ -89,7 +89,7 @@ namespace RewardManager{
                 Console.WriteLine($"Current reward denoter after adding is {rewardDenoter[0]+changeTo}");
             }
             catch (Exception e){
-                Console.WriteLine($"txt writing error. If because player respawned without reset, ignore this. {e.Message}");
+                Console.WriteLine($"txt writing error. If player respawned without reset, ignore this. {e.Message}");
             }
         }
         public static void resetRewardDenoter(){

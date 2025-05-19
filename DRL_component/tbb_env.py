@@ -18,10 +18,11 @@ class TBBEnv(gym.Env):
         self.total_steps = 0
         self.episode_steps = 0
         self.pre_reward_denoter = 0
-        self.screen_grabber = dxcam.create(output_idx=1)
+        self.screen_grabber = dxcam.create(device_idx=get_setting("dxcam_device_idx"), output_idx=get_setting("dxcam_output_idx"))
         self.pre_screen = np.zeros((HEIGHT // RESCALE_FACTOR, WIDTH // RESCALE_FACTOR, 3), dtype=np.uint8)
 
     def reset(self, seed=None, options=None):
+        print(f"Episode steps {self.episode_steps}. Total steps {self.total_steps}.")
         pydirectinput.press('r')  # r is ingame input that resets the state
         pydirectinput.press('1')  # select weapon
         pydirectinput.moveTo(WIDTH//2, HEIGHT//2) # mouse to middle of screen

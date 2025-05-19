@@ -39,7 +39,7 @@ def train():
     if not using_checkpoint:
         print("Fresh start.")
         env = VecFrameStack(make_vec_env(tbb_env.TBBEnv, n_envs=1), n_stack=4)
-        model = PPO("CnnPolicy", env, learning_rate=3e-5, verbose=1, n_steps=stride, tensorboard_log="checkpoint/tensorboard")
+        model = PPO("CnnPolicy", env, learning_rate=get_setting("model_learning_rate"), verbose=1, n_steps=stride, tensorboard_log="checkpoint/tensorboard")
 
     atexit.register(env.close)
 
