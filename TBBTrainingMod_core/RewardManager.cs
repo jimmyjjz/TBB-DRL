@@ -4,37 +4,52 @@ using System;
 using System.IO;
 using SettingsAccesser;
 using Terraria.DataStructures;
+using System.Net;
 
-namespace RewardManager{
-    public class DealDamageIncentive : ModPlayer{
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone){
+namespace RewardManager {
+    public class DealDamageIncentive : ModPlayer {
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
             int boss_id = SettingsOperations.get_int_value("boss_id");
-            if (target.type == boss_id){
+            if (target.type == boss_id) {
                 RewardDenoterManager.addReward(hit.Damage * SettingsOperations.get_int_value("attack_reward_factor"));
                 bool finish = true;
-                foreach (NPC npc in Main.npc){
-                    if (npc.active && npc.type == boss_id){
+                foreach (NPC npc in Main.npc) {
+                    if (npc.active && npc.type == boss_id) {
                         finish = false;
                         break;
                     }
                 }
-                if (finish){
+                if (finish) {
                     File.WriteAllText(SettingsOperations.get_string_value("reward_denoter_path"), "EInactive. Boss defeated.");
                 }
                 //Main.NewText($"Damage given: {hit.Damage}");
             }
         }
     }
-    public class TakeDamageDisincentive : ModPlayer{
-        public override void OnHurt(Player.HurtInfo info){
-            if(!RewardDenoterManager.readRewardDenoter().Substring(1).Equals("Inactive. Boss defeated.")){
+    public class TakeDamageDisincentive : ModPlayer {
+        public override void OnHurt(Player.HurtInfo info) {
+            if (!RewardDenoterManager.readRewardDenoter().Substring(1).Equals("Inactive. Boss defeated.")) {
                 RewardDenoterManager.addReward(-info.Damage * SettingsOperations.get_int_value("hurt_punishment_factor"));
                 //Main.NewText($"Damage taken: {info.Damage}");
             }
         }
-        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource){
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource) {
             File.WriteAllText(SettingsOperations.get_string_value("reward_denoter_path"), "EInactive. Player died.");
             //Main.NewText("Player died");
+        }
+    }
+    public class DrinkHPotIncentive : GlobalItem {
+        public override void OnConsumeItem(Item item, Player player) {
+            if (item.healLife > 0 && TrackPlayerHP.preHP!=-1) {
+                int reward = Math.Min(TrackPlayerHP.preHP + item.healLife, player.statLifeMax) - TrackPlayerHP.preHP;
+                RewardDenoterManager.addReward(reward * SettingsOperations.get_int_value("hurt_punishment_factor"));
+            }
+        }
+    }
+    public class TrackPlayerHP : ModPlayer{
+        public static int preHP = -1;
+        public override void PreUpdate(){
+            preHP = Player.statLife;
         }
     }
     public class RunAwayDisincentive : ModPlayer{

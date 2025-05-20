@@ -26,7 +26,7 @@ namespace ResetManager{
                 //reset fall start
                 Player.fallStart = (int)(Player.position.Y / 16f);
                 //teleport
-                Player.Teleport(new Vector2(SettingsOperations.get_int_value("initial_point_x"), SettingsOperations.get_int_value("initial_point_y")), 1);
+                Player.Teleport(new Vector2(SettingsOperations.get_int_value("player_initial_point_x"), SettingsOperations.get_int_value("player_initial_point_y")), 1);
                 //if player is dead then player will immediately spawn at defined location
                 Main.spawnTileX = (int)Player.position.X / 16;
                 Main.spawnTileY = (int)Player.position.Y / 16;
@@ -38,8 +38,14 @@ namespace ResetManager{
                 for (int i = 0; i < Player.inventory.Length; i++){
                     Player.inventory[i].TurnToAir();
                 }
+                //clear all buffs
+                for (int i = Player.MaxBuffs - 1; i >= 0; i--){
+                    Player.DelBuff(i);
+                }
+                //clear potion delay
+                Player.potionDelay = 0;
                 //hotbar setup
-                List<Tuple<int,int>> items = SettingsOperations.get_loadout();
+                List<Tuple<int, int>> items = SettingsOperations.get_loadout();
                 for (int i = 0; i < items.Count; i++){
                     Player.inventory[i].SetDefaults(items[i].Item1);
                     Player.inventory[i].stack = items[i].Item2;
@@ -63,8 +69,8 @@ namespace ResetManager{
                 //summon boss
                 NPC.NewNPC(
                     Entity.GetSource_FromThis(),
-                    35050,
-                    8100,
+                    SettingsOperations.get_int_value("boss_initial_point_x"),
+                    SettingsOperations.get_int_value("boss_initial_point_y"),
                     SettingsOperations.get_int_value("boss_id"),
                     Target: Main.myPlayer
                 );

@@ -1,8 +1,10 @@
+import math
 import gymnasium as gym
 from gymnasium import spaces
 import pydirectinput
 import numpy as np
 import dxcam
+
 from utils import resize_img, get_setting
 
 HEIGHT = get_setting("monitor_height")
@@ -12,8 +14,8 @@ RESCALE_FACTOR = 8
 class TBBEnv(gym.Env):
     def __init__(self):
         super().__init__()
-        # left, right, jump/fly, attack, hook, m(mouse).x -/+, m.x bit 1...7, m(mouse).y -/+, m.y bit 1...7
-        self.action_space=gym.spaces.MultiBinary(21)
+        #left, right, jump, attack, hook, heal, mouse x, mouse y
+        self.action_space=gym.spaces.Box(low=-1, high=1, shape=(8,), dtype=np.float32)
         self.observation_space = spaces.Box(0, 255, shape=(HEIGHT // RESCALE_FACTOR, WIDTH // RESCALE_FACTOR, 3), dtype=np.uint8)
         self.total_steps = 0
         self.episode_steps = 0
@@ -25,6 +27,7 @@ class TBBEnv(gym.Env):
         print(f"Episode steps {self.episode_steps}. Total steps {self.total_steps}.")
         pydirectinput.press('r')  # r is ingame input that resets the state
         pydirectinput.press('1')  # select weapon
+        pydirectinput.press('b') # use buff potions
         pydirectinput.moveTo(WIDTH//2, HEIGHT//2) # mouse to middle of screen
         #input keys up
         pydirectinput.keyUp('a')
@@ -32,6 +35,7 @@ class TBBEnv(gym.Env):
         pydirectinput.keyUp(' ')
         pydirectinput.mouseUp()
         pydirectinput.keyUp('e')
+        pydirectinput.keyUp('h')
 
         screen = self.screen_grabber.grab()
         if screen is None:
@@ -48,34 +52,15 @@ class TBBEnv(gym.Env):
         cur_x, cur_y = pydirectinput.position()
         #print(action)
         if not(get_setting("stop_input_when_cursor_off_main_screen") and (cur_x<0 or cur_x>WIDTH or cur_y<0 or cur_y>HEIGHT)):
-            pydirectinput.keyDown('a') if action[0] else pydirectinput.keyUp('a')
-            pydirectinput.keyDown('d') if action[1] else pydirectinput.keyUp('d')
-            pydirectinput.keyDown(' ') if action[2] else pydirectinput.keyUp(' ')
-            pydirectinput.mouseDown() if action[3] else pydirectinput.mouseUp()
-            pydirectinput.keyDown('e') if action[4] else pydirectinput.keyUp('e')
-
-            horizontal_move=0
-            for i in range(6, 13):
-                if action[i]:
-                    horizontal_move|=(1<<(i-6))
-            horizontal_move*=10
-
-            vertical_move=0
-            for i in range(14, 21):
-                if action[i]:
-                    vertical_move |= (1<<(i-14))
-            vertical_move*=10
-
-            if action[5]: horizontal_move*=-1
-            if action[13]: vertical_move*=-1
-
-            if get_setting("restrain_cursor_from_side_monitor"):
-                pydirectinput.moveTo(max(min(cur_x+horizontal_move,WIDTH),0), max(min(cur_y+vertical_move,HEIGHT),0))
-            else:
-                pydirectinput.moveTo(cur_x + horizontal_move, cur_y + vertical_move)
+            pydirectinput.keyDown('a') if round(action[0],0)!=0.0 else pydirectinput.keyUp('a')
+            pydirectinput.keyDown('d') if round(action[1],0)!=0.0 else pydirectinput.keyUp('d')
+            pydirectinput.keyDown(' ') if round(action[2],0)!=0.0 else pydirectinput.keyUp(' ')
+            pydirectinput.mouseDown() if round(action[3],0)!=0.0 else pydirectinput.mouseUp()
+            pydirectinput.keyDown('e') if round(action[4],0)!=0.0 else pydirectinput.keyUp('e')
+            pydirectinput.keyDown('h') if round(action[5],0)!=0.0 else pydirectinput.keyUp('h')
+            pydirectinput.moveTo(int(round((action[6]+1)*(WIDTH//2), 0)), int(round((action[7]+1)*(HEIGHT//2), 0)))
         else:
             print("Mouse is offscreen.")
-
         screen = self.screen_grabber.grab()
         if screen is None:
             print(f"Screen idle at episode step {self.episode_steps}, total step {self.total_steps}.")
