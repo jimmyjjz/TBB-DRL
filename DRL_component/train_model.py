@@ -13,7 +13,7 @@ WIDTH = get_setting("monitor_width")
 def train():
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-    stride=get_setting("stride")
+    batch_size=get_setting("batch_size")
 
     using_checkpoint=False
     initial_timestep=0
@@ -39,16 +39,23 @@ def train():
     if not using_checkpoint:
         print("Fresh start.")
         env = VecFrameStack(make_vec_env(tbb_env.TBBEnv, n_envs=1), n_stack=4)
-        model = PPO("CnnPolicy", env, learning_rate=get_setting("model_learning_rate"), verbose=1, n_steps=stride, tensorboard_log="checkpoint/tensorboard")
+        model = PPO("CnnPolicy",
+                    env,
+                    ent_coef=get_setting("entropy_coef"),
+                    vf_coef=get_setting("value_coef"),
+                    learning_rate=get_setting("model_learning_rate"),
+                    verbose=1,
+                    n_steps=batch_size,
+                    tensorboard_log="checkpoint/tensorboard")
 
     atexit.register(env.close)
 
-    for i in range(1,get_setting("amount_of_strides")+1):
-        print(f"Stride {i}.")
+    for i in range(1,get_setting("batches")+1):
+        print(f"Batch {i}.")
         env.reset()
-        model.learn(total_timesteps=stride, reset_num_timesteps=False)
-        model.save(f"checkpoint/{initial_timestep+(stride*i)}")
-        print(f"Current model saved as checkpoint {initial_timestep+(stride*i)}.")
+        model.learn(total_timesteps=batch_size, reset_num_timesteps=False)
+        model.save(f"checkpoint/{initial_timestep+(batch_size*i)}")
+        print(f"Current model saved as checkpoint {initial_timestep+(batch_size*i)}.")
 
 if __name__ == "__main__":
     train()

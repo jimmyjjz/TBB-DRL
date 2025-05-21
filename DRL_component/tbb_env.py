@@ -14,8 +14,8 @@ RESCALE_FACTOR = 8
 class TBBEnv(gym.Env):
     def __init__(self):
         super().__init__()
-        #left, right, jump, attack, hook, heal, mouse x, mouse y
-        self.action_space=gym.spaces.Box(low=-1, high=1, shape=(8,), dtype=np.float32)
+        #left, right, down, jump/fly, attack, hook, heal, mouse x, mouse y
+        self.action_space=gym.spaces.Box(low=-1, high=1, shape=(9,), dtype=np.float32)
         self.observation_space = spaces.Box(0, 255, shape=(HEIGHT // RESCALE_FACTOR, WIDTH // RESCALE_FACTOR, 3), dtype=np.uint8)
         self.total_steps = 0
         self.episode_steps = 0
@@ -54,11 +54,14 @@ class TBBEnv(gym.Env):
         if not(get_setting("stop_input_when_cursor_off_main_screen") and (cur_x<0 or cur_x>WIDTH or cur_y<0 or cur_y>HEIGHT)):
             pydirectinput.keyDown('a') if round(action[0],0)!=0.0 else pydirectinput.keyUp('a')
             pydirectinput.keyDown('d') if round(action[1],0)!=0.0 else pydirectinput.keyUp('d')
-            pydirectinput.keyDown(' ') if round(action[2],0)!=0.0 else pydirectinput.keyUp(' ')
-            pydirectinput.mouseDown() if round(action[3],0)!=0.0 else pydirectinput.mouseUp()
-            pydirectinput.keyDown('e') if round(action[4],0)!=0.0 else pydirectinput.keyUp('e')
-            pydirectinput.keyDown('h') if round(action[5],0)!=0.0 else pydirectinput.keyUp('h')
-            pydirectinput.moveTo(int(round((action[6]+1)*(WIDTH//2), 0)), int(round((action[7]+1)*(HEIGHT//2), 0)))
+            pydirectinput.keyDown('s') if round(action[2],0) != 0.0 else pydirectinput.keyUp('d')
+            pydirectinput.keyDown(' ') if round(action[3],0)!=0.0 else pydirectinput.keyUp(' ')
+            pydirectinput.mouseDown() if round(action[4],0)!=0.0 else pydirectinput.mouseUp()
+            pydirectinput.keyDown('e') if round(action[5],0)!=0.0 else pydirectinput.keyUp('e')
+            pydirectinput.keyDown('h') if round(action[6],0)!=0.0 else pydirectinput.keyUp('h')
+            pydirectinput.moveTo(int(round((action[7]+1)*(WIDTH//2), 0)), int(round((action[8]+1)*(HEIGHT//2), 0)))
+            #print(int(round((action[7]+1)*(WIDTH//2), 0)), int(round((action[8]+1)*(HEIGHT//2), 0)))
+            #print(action[7],action[8])
         else:
             print("Mouse is offscreen.")
         screen = self.screen_grabber.grab()

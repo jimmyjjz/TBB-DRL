@@ -25,7 +25,7 @@ def run():
 
     while True:
         action, _states = model.predict(obs, deterministic=False)
-        obs, reward, dones, info = env.step(action)
+        obs, reward, done, info = env.step(action)
 
 if __name__ == "__main__":
     run()
