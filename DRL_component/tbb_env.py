@@ -24,7 +24,6 @@ class TBBEnv(gym.Env):
         self.pre_screen = np.zeros((HEIGHT // RESCALE_FACTOR, WIDTH // RESCALE_FACTOR, 3), dtype=np.uint8)
 
     def reset(self, seed=None, options=None):
-        print(f"Episode steps {self.episode_steps}. Total steps {self.total_steps}.")
         pydirectinput.press('r')  # r is ingame input that resets the state
         pydirectinput.press('1')  # select weapon
         pydirectinput.press('b') # use buff potions
@@ -49,6 +48,8 @@ class TBBEnv(gym.Env):
         return obs, {}
 
     def step(self, action):
+        if self.episode_steps%5==0:
+            print(f"Episode steps {self.episode_steps}. Session total steps {self.total_steps}.")
         cur_x, cur_y = pydirectinput.position()
         #print(action)
         if not(get_setting("stop_input_when_cursor_off_main_screen") and (cur_x<0 or cur_x>WIDTH or cur_y<0 or cur_y>HEIGHT)):

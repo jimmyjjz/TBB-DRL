@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using SettingsAccesser;
 using Terraria.DataStructures;
-using System.Net;
 
 namespace RewardManager {
     public class DealDamageIncentive : ModPlayer {

@@ -13,7 +13,7 @@ WIDTH = get_setting("monitor_width")
 def train():
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-    batch_size=get_setting("batch_size")
+    timesteps_per_checkpoint=get_setting("timesteps_per_checkpoint")
 
     using_checkpoint=False
     initial_timestep=0
@@ -42,20 +42,26 @@ def train():
         model = PPO("CnnPolicy",
                     env,
                     ent_coef=get_setting("entropy_coef"),
-                    vf_coef=get_setting("value_coef"),
+                    vf_coef=get_setting("value_function_coef"),
                     learning_rate=get_setting("model_learning_rate"),
                     verbose=1,
-                    n_steps=batch_size,
+                    n_steps=get_setting("n_steps"),
+                    n_epochs=get_setting("n_epochs"),
+                    gamma=get_setting("gamma"),
+                    gae_lambda=get_setting("gae_lambda"),
+                    clip_range=get_setting("clip_range"),
+                    max_grad_norm=get_setting("max_grad_norm"),
+                    use_sde=get_setting("use_sde"),
                     tensorboard_log="checkpoint/tensorboard")
 
     atexit.register(env.close)
 
-    for i in range(1,get_setting("batches")+1):
-        print(f"Batch {i}.")
+    for i in range(1,get_setting("checkpoints_to_go_through")+1):
+        print(f"Next checkpoint: {i}.")
         env.reset()
-        model.learn(total_timesteps=batch_size, reset_num_timesteps=False)
-        model.save(f"checkpoint/{initial_timestep+(batch_size*i)}")
-        print(f"Current model saved as checkpoint {initial_timestep+(batch_size*i)}.")
+        model.learn(total_timesteps=timesteps_per_checkpoint, reset_num_timesteps=False)
+        model.save(f"checkpoint/{initial_timestep+(timesteps_per_checkpoint * i)}")
+        print(f"Current model saved as checkpoint {initial_timestep+(timesteps_per_checkpoint * i)}.")
 
 if __name__ == "__main__":
     train()

@@ -51,8 +51,10 @@ namespace ResetManager{
                     Player.inventory[i].stack = items[i].Item2;
                 }
                 //makes all hostile mobs disappear(not killing)
-                foreach (NPC npc in Main.npc){
-                    if (npc.active && !npc.friendly && !npc.townNPC && !npc.dontTakeDamage){
+                foreach (NPC npc in Main.npc)
+                {
+                    if (npc.active && !npc.friendly && !npc.townNPC && !npc.dontTakeDamage)
+                    {
                         npc.active = false;
                     }
                 }
