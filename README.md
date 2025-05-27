@@ -1,6 +1,6 @@
 # Deep Reinforcement Learning Applied to Terraria Boss Battles
 ### Introduction
-This project utilizes PPO(proximal policy optimization) to train an agent to defeat Terraria bosses. The agent learns via screencapture inputs and rewards off of ingame damage(taken and dealt accordingly), therefore possesses supreme adaptivity. This allows training on any Terraria boss no matter if it is worm-type(eater of worlds), segmented(skeletron), or singular(eye of cthulu) without any code changes. Thus, can be used with ease to explore possible play styles with different ingame equipment or for playtesting with different levels of competency against different bosses.
+This project utilizes PPO(proximal policy optimization) to train an agent to defeat Terraria bosses. The agent learns via screencapture inputs and rewards off of ingame damage(taken and dealt accordingly), therefore possesses supreme adaptivity. This allows training on any Terraria boss no matter if it is worm-type(Ex. Eater of Worlds), segmented(Ex. Skeletron), or singular(Ex. Eye of Cthulu) without any code changes. Thus, can be used with ease to explore possible play styles with different ingame equipment or for playtesting with different levels of competency against different bosses.
 
 ### Brief Overview on How it Works
 ![How it works diagram](https://github.com/jimmyjjz/TBB-DRL/blob/main/TBBDRL_diagram.png)
